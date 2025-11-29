@@ -4,7 +4,7 @@ import threading
 HOST='7.tcp.eu.ngrok.io'
 PORT = 18093
 
-name = input('ВВедіть ім\'я: ')
+name = input('Введіть ім\'я: ')
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 try:
@@ -33,7 +33,8 @@ while True:
         if message:
             print(message)
     except:
-        print('роз\'єдналось з\'єднання')
+        print('Роз\'єдналось з\'єднання')
         break
+
 
 client_socket.close()
