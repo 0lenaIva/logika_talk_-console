@@ -1,49 +1,38 @@
-import socket
-import time
+from socket import *
 import threading
 
-HOST='localhost'
-PORT=8080
-users = []
+server_socket = socket(AF_INET, SOCK_STREAM)
+server_socket.bind(('localhost', 8080))  # Use a fixed port
+server_socket.listen(5)
+print("Server running...")
 
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind((HOST, PORT))
-server_socket.listen(1)
-print('очікуємо клієнта')
+clients = []
+
 
 def broadcast(message):
-    for client in users:
+    for client in clients:
         try:
-            client.send(f'{message}'.encode())
+            client.send(f"{message}\n".encode())
         except:
             pass
 
-def handle_client(client):
-    userName = client.recv(1024).decode().strip()
-    broadcast(f'{userName} доєднався!')
+
+def handle_client(client_socket):
+    name = client_socket.recv(1024).decode().strip()
+    broadcast(f"{name} joined!")
+
     while True:
         try:
-            message = client.recv(1024).decode().strip()
-            broadcast(f'{userName}: {message}')
+            message = client_socket.recv(1024).decode().strip()
+            broadcast(f"{name}: {message}")
         except:
-            users.remove(client)
-            broadcast(f'{userName} відключився')
-            client.close()
+            clients.remove(client_socket)
+            broadcast(f"{name} left!")
+            client_socket.close()
             break
 
-while True:#<--------------------------------
 
-    client, address = server_socket.accept()
-    users.append(client)
-    threading.Thread(target=handle_client, args=(client,), daemon=True).start()
-        
-
-    
-
-    
-
-
-    
-    
-
-
+while True:
+    client_socket, addr = server_socket.accept()
+    clients.append(client_socket)
+    threading.Thread(target=handle_client, args=(client_socket,), daemon=True).start()
