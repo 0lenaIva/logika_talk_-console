@@ -1,6 +1,8 @@
 import socket
 import threading
-from colorama import Fore, Style, init
+from colorama import Fore, Style,Back,  init
+from termcolor import *
+
 from pyfiglet import Figlet
 from time import sleep
 
@@ -27,7 +29,9 @@ try:
     client_socket.connect((HOST,PORT))
     client_socket.send(name.encode())
 except:
-    print(Fore.RED + 'підключення не вдалось.' + Style.RESET_ALL)
+    t = (colored('підключення не вдалось.', 'red', attrs=['bold','dark']))
+    print('\033[5m' + t+'\033[0m')#миготіння??
+    
 
 def send_message():
     while True:
